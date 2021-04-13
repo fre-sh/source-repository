@@ -52,6 +52,10 @@ public class ZkCuratorDemo {
         }
     }
 
+    /**
+     * 测试监听节点数据变化，支持节点和子节点 创建、修改、删除（节点删除后重建依然可以监听到）...
+     * @throws Exception
+     */
     @Test
     public void testTreeCache() throws Exception {
         TreeCache treeCache1 = new TreeCache(client, POLICY_NODE);
@@ -59,22 +63,12 @@ public class ZkCuratorDemo {
         treeCache1.getListenable().addListener(new TreeCacheListener() {
             @Override
             public void childEvent(CuratorFramework client, TreeCacheEvent event) throws Exception {
+                ChildData childData = event.getData();
+                if (event.getType() == TreeCacheEvent.Type.NODE_REMOVED) {
+                    // 节点被删除时，childData为删除前的数据
+                }
                 System.out.println("event = " + event);
-                byte[] data = event.getData().getData();
-                String value = new String(data);
-                System.out.println("data value = " + value);
-                System.out.println("---------------------------------------");
-            }
-        }, executor);
-
-
-        TreeCache treeCache = new TreeCache(client, "/audit");
-        treeCache.start();
-        treeCache.getListenable().addListener(new TreeCacheListener() {
-            @Override
-            public void childEvent(CuratorFramework client, TreeCacheEvent event) throws Exception {
-                System.out.println("event = " + event);
-                byte[] data = event.getData().getData();
+                byte[] data = childData.getData();
                 String value = new String(data);
                 System.out.println("data value = " + value);
                 System.out.println("---------------------------------------");
@@ -83,13 +77,14 @@ public class ZkCuratorDemo {
     }
 
     /**
-     * 测试监听节点数据变化
+     * 测试监听节点数据变化，支持节点创建、修改、删除（节点删除后重建依然可以监听到）
      * @throws Exception
      */
     @Test
     public void testNodeCache() throws Exception {
         NodeCache nodeCache = new NodeCache(client, "/ddm/a", false);
         nodeCache.getListenable().addListener(() -> {
+            // 节点被删除时，nodeCache.getCurrentData() = null
             System.out.println("路径为：" + nodeCache.getCurrentData().getPath());
             System.out.println("数据为：" + new String(nodeCache.getCurrentData().getData()));
             System.out.println("状态为：" + nodeCache.getCurrentData().getStat());
