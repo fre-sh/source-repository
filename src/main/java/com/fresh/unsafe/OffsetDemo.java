@@ -1,5 +1,6 @@
 package com.fresh.unsafe;
 
+import com.fresh.util.UnsafeUtils;
 import sun.misc.Unsafe;
 
 /**

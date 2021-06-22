@@ -1,4 +1,4 @@
-package com.fresh.unsafe;
+package com.fresh.util;
 
 import sun.misc.Unsafe;
 

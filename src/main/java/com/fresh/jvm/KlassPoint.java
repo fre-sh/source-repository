@@ -1,6 +1,5 @@
 package com.fresh.jvm;
 
-import com.fresh.unsafe.UnsafeUtils;
 import org.openjdk.jol.info.ClassLayout;
 
 /**
