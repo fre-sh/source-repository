@@ -115,6 +115,43 @@ public class TestInteraction {
         }
     }
 
+    Thread t1, t2, t3;
+
+    /**
+     * 线程1打印a，线程2打印b，线程3打印c，实现abcabc...(5次）
+     * park实现
+     */
+    @Test
+    public void testParkSolution() {
+
+        t1 = new Thread(() -> {
+            parkSolution( "a", t2);
+        }, "t1");
+        t1.start();
+
+        t2 = new Thread(() -> {
+            parkSolution( "b", t3);
+        }, "t2");
+        t2.start();
+
+        t3 = new Thread(() -> {
+            parkSolution( "c", t1);
+        }, "t3");
+        t3.start();
+
+        LockSupport.unpark(t1);
+        ThreadUtils.sleep(3000);
+    }
+
+ 
+    private void parkSolution(String print, Thread nextThread) {
+        for (int i = 0; i < 5; i++) {
+            LockSupport.park();
+            log.info(print);
+            LockSupport.unpark(nextThread);
+        }
+    }
+
     private static final Object sLock = new Object();
     private static boolean t2NotOver = true;
 

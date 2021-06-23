@@ -28,9 +28,6 @@ public class ReentrantLockDemo {
 
     @Test
     public void testCondition() throws InterruptedException {
-        condition1.signal();
-        condition1.await();
-
         new Thread(() -> {
             lock.lock();
             try {

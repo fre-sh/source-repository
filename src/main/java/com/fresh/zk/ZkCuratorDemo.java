@@ -1,5 +1,6 @@
 package com.fresh.zk;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.recipes.cache.*;
@@ -9,6 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,9 +20,10 @@ import java.util.concurrent.Executors;
  * @author guowenyu
  * @since 2021/4/2
  */
+@Slf4j
 public class ZkCuratorDemo {
 
-    public static final String CONNECT_STRING = "192.168.13.131:2181";
+    public static final String CONNECT_STRING = "192.168.13.195:13000";
     public static final String POLICY_NODE = "/ddm";
 
     private CuratorFramework client;
@@ -44,12 +47,18 @@ public class ZkCuratorDemo {
         });
         try {
             countDownLatch.await();
-            System.out.println("get data...");
-            byte[] bytes = client.getData().forPath(POLICY_NODE);
-            System.out.println("initial value:" + new String(bytes));
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void testLs() throws Exception {
+        byte[] bytes = client.getData().forPath("/hbase/meta-region-server");
+        String s = new String(bytes);
+        String s2 = new String(bytes, StandardCharsets.UTF_8);
+        log.info(s);
+        log.info(s2);
     }
 
     /**
